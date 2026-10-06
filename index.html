@@ -49,11 +49,6 @@ footer a,footer button.link{color:var(--mute);background:none;border:0;font:inhe
       <select id="newStatus"><option value="need">Precisamos</option><option value="have">Já temos</option></select>
       <button class="act" type="submit">Adicionar item</button>
     </form>
-    <div id="qrbox" style="margin-top:12px">
-      <div id="qr"></div><br>
-      <button class="act sec" id="printQr" type="button">Imprimir QR code</button>
-      <button class="act sec" id="logout" type="button">Sair</button>
-    </div>
   </section>
 
   <div class="tabs" role="tablist">
@@ -62,14 +57,19 @@ footer a,footer button.link{color:var(--mute);background:none;border:0;font:inhe
   </div>
   <div id="list"></div>
 
-  <footer><button class="link" id="loginBtn">Gerir lista</button></footer>
+  <section id="qrbox" style="text-align:center;margin-top:32px">
+    <h2>Partilha esta lista</h2>
+    <div id="qr"></div><br>
+    <button class="act sec" id="printQr" type="button">Imprimir QR code</button>
+  </section>
+  <footer><button class="link" id="loginBtn">Gerir lista</button><button class="link" id="logout" hidden type="button">Sair</button></footer>
 </main>
 <div class="toast" id="toast"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {getFirestore,collection,addDoc,doc,updateDoc,deleteDoc,onSnapshot,query,orderBy,serverTimestamp,deleteField}
+import {getFirestore,collection,addDoc,doc,updateDoc,deleteDoc,onSnapshot,serverTimestamp,deleteField}
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import {getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged}
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -88,23 +88,25 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 const items = collection(db, "items");
 const $ = id => document.getElementById(id);
+new QRCode($("qr"),{text:location.origin+location.pathname,width:180,height:180});
 
 let all = [], tab = "need", isAdmin = false;
 let me = localStorage.getItem("guestName") || "";
 
 const toast = msg => { const t=$("toast"); t.textContent=msg; t.style.display="block"; setTimeout(()=>t.style.display="none",2500); };
 
-onSnapshot(query(items, orderBy("category"), orderBy("name")), snap => {
-  all = snap.docs.map(d => ({id:d.id, ...d.data()}));
+onSnapshot(items, snap => {
+  all = snap.docs.map(d => ({id:d.id, ...d.data()}))
+    .sort((a,b) => (a.category||"").localeCompare(b.category||"","pt") || (a.name||"").localeCompare(b.name||"","pt"));
   $("cats").innerHTML = [...new Set(all.map(i=>i.category))].map(c=>`<option value="${esc(c)}">`).join("");
   render();
-}, () => toast("Não foi possível carregar a lista."));
+}, err => { console.error(err); toast("Erro ao carregar: " + err.code); });
 
 onAuthStateChanged(auth, u => {
   isAdmin = !!u;
   $("adminPanel").hidden = !isAdmin;
   $("loginBtn").hidden = isAdmin;
-  if (isAdmin) { $("qr").innerHTML=""; new QRCode($("qr"),{text:location.origin+location.pathname,width:180,height:180}); }
+  $("logout").hidden = !isAdmin;
   render();
 });
 
