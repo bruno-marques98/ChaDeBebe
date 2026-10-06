@@ -83,7 +83,11 @@ footer button.link{color:var(--mute);background:none;border:0;font:inherit;text-
   <section id="qrbox" style="text-align:center;margin-top:32px">
     <h2>Partilha esta lista com a família e amigos</h2>
     <div id="qr"></div><br>
-    <button class="act sec" id="printQr" type="button">Imprimir QR code</button>
+    <div class="acts" style="justify-content:center;margin-top:6px">
+      <button class="act" id="shareQr" type="button">Partilhar</button>
+      <button class="act sec" id="saveQr" type="button">Guardar imagem</button>
+      <button class="act sec" id="printQr" type="button">Imprimir</button>
+    </div>
   </section>
   <footer><button class="link" id="loginBtn">Gerir lista</button><button class="link" id="logout" hidden type="button">Sair</button></footer>
 </main>
@@ -203,6 +207,28 @@ $("loginBtn").onclick = async () => {
 };
 $("logout").onclick = () => signOut(auth);
 $("printQr").onclick = () => window.print();
+
+const pageUrl = () => location.origin + location.pathname;
+const qrCanvas = () => $("qr").querySelector("canvas");
+const qrFile = () => new Promise(res => qrCanvas().toBlob(b => res(new File([b], "qr-sebastiao.png", {type:"image/png"})), "image/png"));
+async function copyLink(){ try { await navigator.clipboard.writeText(pageUrl()); toast("Link copiado!"); } catch { toast("Não foi possível partilhar."); } }
+
+$("shareQr").onclick = async () => {
+  const text = "Chá de bebé do Sebastião 💙 Vê a lista e marca o que vais comprar: " + pageUrl();
+  try {
+    const f = await qrFile();
+    if (navigator.canShare && navigator.canShare({files:[f]})) { await navigator.share({title:"Chá de bebé do Sebastião", text, files:[f]}); return; }
+    if (navigator.share) { await navigator.share({title:"Chá de bebé do Sebastião", text:"Vê a lista e marca o que vais comprar 💙", url:pageUrl()}); return; }
+    await copyLink();
+  } catch (e) { if (e.name !== "AbortError") await copyLink(); }
+};
+
+$("saveQr").onclick = () => {
+  const a = document.createElement("a");
+  a.href = qrCanvas().toDataURL("image/png");
+  a.download = "qr-sebastiao.png";
+  a.click();
+};
 </script>
 </body>
 </html>
