@@ -69,7 +69,7 @@ footer a,footer button.link{color:var(--mute);background:none;border:0;font:inhe
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {getFirestore,collection,addDoc,doc,updateDoc,deleteDoc,onSnapshot,serverTimestamp,deleteField}
+import {initializeFirestore,collection,addDoc,doc,updateDoc,deleteDoc,onSnapshot,serverTimestamp,deleteField}
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import {getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged}
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -84,7 +84,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const db = initializeFirestore(app, {experimentalForceLongPolling: true, useFetchStreams: false});
 const auth = getAuth(app);
 const items = collection(db, "items");
 const $ = id => document.getElementById(id);
