@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Chá de bebé do Sebastião</title>
+<title>Chá de bebé do Sebastião, 20 de Dezembro</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#e9f2f9;--sky:#cfe3f3;--card:#fff;--ink:#1d3557;--mute:#5f7391;--line:#d3e1ee;--blue:#3f7cc4;--sun:#f6c85f;--ok:#2f8f6b}
@@ -14,6 +14,7 @@ header svg.deco{position:absolute;inset:0;width:100%;height:100%;pointer-events:
 header .in{position:relative;max-width:640px;margin:0 auto}
 .kicker{margin:0;color:var(--mute);font-weight:700}
 h1{font:600 clamp(2.2rem,9vw,3.2rem)/1.05 Fredoka,sans-serif;margin:4px 0 8px;letter-spacing:-.01em}
+.date{display:inline-block;margin:0 0 10px;padding:4px 14px;background:#fff;border-radius:99px;font:600 1rem Fredoka,sans-serif}
 .sub{margin:0 auto;max-width:34ch;color:var(--ink)}
 header::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:28px;background:var(--bg);border-radius:28px 28px 0 0}
 main{max-width:640px;margin:0 auto;padding:0 16px 72px}
@@ -45,6 +46,11 @@ input{flex:1;min-width:140px}
 #qr{display:inline-block;padding:10px;background:#fff;border-radius:12px;margin:4px 0}
 footer{margin-top:24px;text-align:center}
 footer button.link{color:var(--mute);background:none;border:0;font:inherit;text-decoration:underline;cursor:pointer}
+dialog{border:0;border-radius:18px;padding:20px;max-width:340px;width:calc(100% - 32px);color:var(--ink)}
+dialog::backdrop{background:rgba(29,53,87,.45)}
+dialog label{display:block;font:600 1.15rem Fredoka,sans-serif;margin-bottom:10px}
+dialog input{width:100%}
+dialog .acts{margin-top:14px;justify-content:flex-end}
 .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;display:none}
 @media print{body *{visibility:hidden}#qrbox,#qrbox *{visibility:visible}#qrbox{position:absolute;left:0;top:0;width:100%;border:0}}
 </style>
@@ -58,6 +64,7 @@ footer button.link{color:var(--mute);background:none;border:0;font:inherit;text-
   <div class="in">
     <p class="kicker">Chá de bebé</p>
     <h1>Sebastião</h1>
+    <p class="date">📅 20 de Dezembro</p>
     <p class="sub">Vê o que ainda falta e marca o que vais comprar, para não haver repetidos.</p>
   </div>
 </header>
@@ -91,6 +98,16 @@ footer button.link{color:var(--mute);background:none;border:0;font:inherit;text-
   </section>
   <footer><button class="link" id="loginBtn">Gerir lista</button><button class="link" id="logout" hidden type="button">Sair</button></footer>
 </main>
+<dialog id="nameDlg">
+  <form method="dialog">
+    <label for="guestName">Qual é o teu nome?</label>
+    <input id="guestName" maxlength="40" autocomplete="name" required>
+    <div class="acts">
+      <button class="act sec" value="cancel" formnovalidate>Cancelar</button>
+      <button class="act" value="ok">Confirmar</button>
+    </div>
+  </form>
+</dialog>
 <div class="toast" id="toast"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -137,6 +154,13 @@ onAuthStateChanged(auth, u => {
   render();
 });
 
+function askName(){
+  return new Promise(res => {
+    const d = $("nameDlg"), i = $("guestName");
+    i.value = ""; d.returnValue = ""; d.showModal(); i.focus();
+    d.addEventListener("close", () => res(d.returnValue === "ok" ? i.value.trim() : ""), {once:true});
+  });
+}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 
 const EMO=[["roupa|body|babygro|meia|casaco","👕"],["banho|higiene|fralda|toalha","🛁"],["quarto|berço|dormir|cama|ninho","🌙"],["passeio|carrinho|cadeira|viagem|auto","🚗"],["aliment|biber|papa|amament","🍼"],["brinq|livro|jogo","🧸"]];
@@ -176,7 +200,7 @@ $("list").addEventListener("click", async e => {
   const ref = doc(db, "items", b.dataset.id), a = b.dataset.a;
   try {
     if (a === "claim") {
-      let n = me || (prompt("Qual é o teu nome?") || "").trim();
+      let n = me || await askName();
       if (!n) return;
       me = n; localStorage.setItem("guestName", n);
       await updateDoc(ref, {claimedBy: n});
@@ -214,7 +238,7 @@ const qrFile = () => new Promise(res => qrCanvas().toBlob(b => res(new File([b],
 async function copyLink(){ try { await navigator.clipboard.writeText(pageUrl()); toast("Link copiado!"); } catch { toast("Não foi possível partilhar."); } }
 
 $("shareQr").onclick = async () => {
-  const text = "Chá de bebé do Sebastião 💙 Vê a lista e marca o que vais comprar: " + pageUrl();
+  const text = "Chá de bebé do Sebastião, 20 de Dezembro 💙 Vê a lista e marca o que vais comprar: " + pageUrl();
   try {
     const f = await qrFile();
     if (navigator.canShare && navigator.canShare({files:[f]})) { await navigator.share({title:"Chá de bebé do Sebastião", text, files:[f]}); return; }
