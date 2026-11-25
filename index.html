@@ -194,8 +194,6 @@ function render(){
   $("list").innerHTML = Object.keys(byCat).map(cat => `<h2>${emo(cat)} ${esc(cat)}</h2>` + byCat[cat].map(i => {
     const cl = claimsOf(i), total = cl.length;
     const mineN = cl.filter(c => c.n === me).length;
-    const counts = {}; cl.forEach(c => counts[c.n] = (counts[c.n]||0) + 1);
-    const names = Object.entries(counts).map(([n,c]) => c>1 ? `${n} (×${c})` : n).join(", ");
     let actions = "";
     if (tab === "need" && !isAdmin) {
       actions = `<button class="act" data-a="claim" data-id="${i.id}">Vou comprar</button>`
@@ -208,7 +206,7 @@ function render(){
     }
     const cls = tab==="have" ? "have" : total ? "taken" : "";
     const badge = total ? `<span class="qty">×${total}</span>` : "";
-    const info = tab==="need" && total ? `<small>${total} ${total>1?"unidades marcadas":"unidade marcada"}: ${esc(names)}</small>` : "";
+    const info = tab==="need" && total ? `<small>${total} ${total>1?"unidades marcadas":"unidade marcada"}</small>` : "";
     return `<div class="item ${cls}"><div class="n"><b>${esc(i.name)}</b>${badge}${info}</div><div class="acts">${actions}</div></div>`;
   }).join("")).join("");
 }
