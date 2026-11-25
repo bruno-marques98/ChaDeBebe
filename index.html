@@ -18,6 +18,9 @@ h1{font:600 clamp(2.2rem,9vw,3.2rem)/1.05 Fredoka,sans-serif;margin:4px 0 8px;le
 .sub{margin:0 auto;max-width:34ch;color:var(--ink)}
 header::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:28px;background:var(--bg);border-radius:28px 28px 0 0}
 main{max-width:640px;margin:0 auto;padding:0 16px 72px}
+.note{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--blue);border-radius:14px;padding:14px 16px;margin:-8px 0 18px;text-align:center}
+.note p{margin:0 0 8px}
+.note p:last-child{margin:0;font:600 1.05rem Fredoka,sans-serif}
 .prog{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 16px;margin:-8px 0 18px}
 .prog p{margin:0 0 8px;font-weight:700}
 .bar{height:10px;background:var(--bg);border-radius:99px;overflow:hidden}
@@ -69,6 +72,10 @@ dialog .acts{margin-top:14px;justify-content:flex-end}
   </div>
 </header>
 <main>
+  <section class="note">
+      <p>Esta lista é apenas uma sugestão. Cada convidado é livre de oferecer o que entender. Pedimos apenas que as prendas tenham talão de troca, para evitar presentes repetidos. 💙</p>
+      <p>O mais importante é a vossa presença neste dia tão especial para nós! 💙</p>
+  </section>
   <div class="prog" id="prog" hidden><p id="progTxt"></p><div class="bar"><i id="progBar"></i></div></div>
 
   <section id="adminPanel" class="admin" hidden>
