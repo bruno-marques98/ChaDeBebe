@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chá de bebé do Sebastião, 20 de Dezembro</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e9f2f9;--sky:#cfe3f3;--card:#fff;--ink:#1d3557;--mute:#5f7391;--line:#d3e1ee;--blue:#3f7cc4;--sun:#f6c85f;--ok:#2f8f6b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Nunito,system-ui,sans-serif}
+header{background:var(--sky);text-align:center;padding:28px 16px 56px;position:relative}
+header svg.deco{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+header .in{position:relative;max-width:640px;margin:0 auto}
+.kicker{margin:0;color:var(--mute);font-weight:700}
+h1{font:600 clamp(2.2rem,9vw,3.2rem)/1.05 Fredoka,sans-serif;margin:4px 0 8px;letter-spacing:-.01em}
+.date{display:inline-block;margin:0 0 10px;padding:4px 14px;background:#fff;border-radius:99px;font:600 1rem Fredoka,sans-serif}
+.sub{margin:0 auto;max-width:34ch;color:var(--ink)}
+header::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:28px;background:var(--bg);border-radius:28px 28px 0 0}
+main{max-width:640px;margin:0 auto;padding:0 16px 72px}
+.note{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--blue);border-radius:14px;padding:14px 16px;margin:-8px 0 18px;text-align:center}
+.note p{margin:0 0 8px}
+.note p:last-child{margin:0;font:600 1.05rem Fredoka,sans-serif}
+.prog{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 16px;margin:0 0 18px}
+.prog p{margin:0 0 8px;font-weight:700}
+.bar{height:10px;background:var(--bg);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--sun);border-radius:99px;transition:width .4s}
+.tabs{display:flex;gap:6px;background:var(--sky);padding:5px;border-radius:99px;margin-bottom:12px}
+.tabs button{flex:1;padding:10px;border:0;background:transparent;color:var(--ink);font:600 1rem Fredoka,sans-serif;border-radius:99px;cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--ink);color:#fff}
+h2{font:600 1.15rem Fredoka,sans-serif;margin:22px 0 8px;color:var(--ink)}
+.item{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-left:5px solid var(--sun);border-radius:14px;padding:12px 14px;margin-bottom:8px;flex-wrap:wrap}
+.item .n{flex:1;min-width:150px}.item .n small{display:block;color:var(--ok);font-weight:700}
+.item.taken{border-left-color:var(--ok);background:#f6fbf9}
+.item.have{border-left-color:var(--blue)}
+.qty{display:inline-block;margin-left:6px;padding:1px 8px;background:var(--sky);border-radius:99px;font:600 .85rem Fredoka,sans-serif}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+button.act{border:0;border-radius:12px;padding:9px 14px;font:600 .95rem Fredoka,sans-serif;cursor:pointer;background:var(--blue);color:#fff}
+button.act.sec{background:#e3ecf5;color:var(--ink)}
+button.act.bad{background:#fde3e3;color:#a22}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.empty{color:var(--mute);padding:28px;text-align:center;border:2px dashed var(--line);border-radius:16px}
+.admin{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:16px}
+.admin form{display:flex;flex-wrap:wrap;gap:8px}
+input,select{font:inherit;padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+input{flex:1;min-width:140px}
+#qrbox{text-align:center;margin-top:36px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}
+#qrbox h2{margin-top:0}
+#qr{display:inline-block;padding:10px;background:#fff;border-radius:12px;margin:4px 0}
+footer{margin-top:24px;text-align:center}
+footer button.link{color:var(--mute);background:none;border:0;font:inherit;text-decoration:underline;cursor:pointer}
+dialog{border:0;border-radius:18px;padding:20px;max-width:340px;width:calc(100% - 32px);color:var(--ink)}
+dialog::backdrop{background:rgba(29,53,87,.45)}
+dialog label{display:block;font:600 1.15rem Fredoka,sans-serif;margin-bottom:10px}
+dialog input{width:100%}
+dialog .acts{margin-top:14px;justify-content:flex-end}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;display:none}
+@media print{body *{visibility:hidden}#qrbox,#qrbox *{visibility:visible}#qrbox{position:absolute;left:0;top:0;width:100%;border:0}}
+</style>
+</head>
+<body>
+<header>
+  <svg class="deco" viewBox="0 0 640 220" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <g fill="#fff" opacity=".85"><ellipse cx="70" cy="60" rx="38" ry="14"/><ellipse cx="96" cy="48" rx="24" ry="14"/><ellipse cx="560" cy="110" rx="42" ry="14"/><ellipse cx="535" cy="98" rx="24" ry="13"/></g>
+    <g fill="#f6c85f"><path d="M580 36l5 11 12 1-9 8 3 12-11-6-11 6 3-12-9-8 12-1z"/><path d="M40 150l3 7 8 1-6 5 2 8-7-4-7 4 2-8-6-5 8-1z"/><circle cx="600" cy="170" r="4"/><circle cx="120" cy="120" r="3"/></g>
+  </svg>
+  <div class="in">
+    <p class="kicker">Chá de bebé</p>
+    <h1>Sebastião</h1>
+    <p class="date">📅 20 de Dezembro</p>
+    <p class="sub">Vê o que ainda falta e marca o que vais comprar, para não haver repetidos.</p>
+  </div>
+</header>
+<main>
+  <section class="note">
+    <p>Esta lista é apenas uma sugestão. Cada convidado é livre de oferecer o que entender. Pedimos apenas que as prendas tenham talão de troca, para evitar presentes repetidos. 💙</p>
+    <p>O mais importante é a vossa presença neste dia tão especial para nós! 💙</p>
+  </section>
+
+  <div class="prog" id="prog" hidden><p id="progTxt"></p><div class="bar"><i id="progBar"></i></div></div>
+
+  <section id="adminPanel" class="admin" hidden>
+    <form id="addForm">
+      <input id="newName" placeholder="Novo item (ex.: Babygrows tamanho 56)" required>
+      <input id="newCat" list="cats" placeholder="Categoria" required>
+      <datalist id="cats"></datalist>
+      <select id="newStatus"><option value="need">Precisamos</option><option value="have">Já temos</option></select>
+      <button class="act" type="submit">Adicionar item</button>
+    </form>
+  </section>
+
+  <div class="tabs" role="tablist">
+    <button role="tab" id="tabNeed" aria-selected="true">Precisamos</button>
+    <button role="tab" id="tabHave" aria-selected="false">Já temos</button>
+  </div>
+  <div id="list"></div>
+
+  <section id="qrbox" style="text-align:center;margin-top:32px">
+    <h2>Partilha esta lista com a família e amigos</h2>
+    <div id="qr"></div><br>
+    <div class="acts" style="justify-content:center;margin-top:6px">
+      <button class="act" id="shareQr" type="button">Partilhar</button>
+      <button class="act sec" id="saveQr" type="button">Guardar imagem</button>
+      <button class="act sec" id="printQr" type="button">Imprimir</button>
+    </div>
+  </section>
+  <footer><button class="link" id="loginBtn">Gerir lista</button><button class="link" id="logout" hidden type="button">Sair</button></footer>
+</main>
+<dialog id="nameDlg">
+  <form method="dialog">
+    <label for="guestName">Qual é o teu nome?</label>
+    <input id="guestName" maxlength="40" autocomplete="name" required>
+    <div class="acts">
+      <button class="act sec" value="cancel" formnovalidate>Cancelar</button>
+      <button class="act" value="ok">Confirmar</button>
+    </div>
+  </form>
+</dialog>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {initializeFirestore,collection,addDoc,doc,updateDoc,deleteDoc,onSnapshot,serverTimestamp,deleteField,arrayUnion}
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged}
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD2XM8T8iPX6Afe887xBnY5JkF1oFYqSKc",
+  authDomain: "listachadebebe.firebaseapp.com",
+  projectId: "listachadebebe",
+  storageBucket: "listachadebebe.firebasestorage.app",
+  messagingSenderId: "797834544009",
+  appId: "1:797834544009:web:e6bc2bd57969969a151758"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = initializeFirestore(app, {experimentalForceLongPolling: true, useFetchStreams: false});
+const auth = getAuth(app);
+const items = collection(db, "items");
+const $ = id => document.getElementById(id);
+new QRCode($("qr"),{text:location.origin+location.pathname,width:180,height:180});
+
+let all = [], tab = "need", isAdmin = false;
+let me = localStorage.getItem("guestName") || "";
+
+const toast = msg => { const t=$("toast"); t.textContent=msg; t.style.display="block"; setTimeout(()=>t.style.display="none",2500); };
+
+onSnapshot(items, snap => {
+  all = snap.docs.map(d => ({id:d.id, ...d.data()}))
+    .sort((a,b) => (a.category||"").localeCompare(b.category||"","pt") || (a.name||"").localeCompare(b.name||"","pt"));
+  $("cats").innerHTML = [...new Set(all.map(i=>i.category))].map(c=>`<option value="${esc(c)}">`).join("");
+  render();
+}, err => { console.error(err); toast("Erro ao carregar: " + err.code); });
+
+onAuthStateChanged(auth, u => {
+  isAdmin = !!u;
+  $("adminPanel").hidden = !isAdmin;
+  $("loginBtn").hidden = isAdmin;
+  $("logout").hidden = !isAdmin;
+  render();
+});
+
+function askName(){
+  return new Promise(res => {
+    const d = $("nameDlg"), i = $("guestName");
+    i.value = ""; d.returnValue = ""; d.showModal(); i.focus();
+    d.addEventListener("close", () => res(d.returnValue === "ok" ? i.value.trim() : ""), {once:true});
+  });
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+
+const EMO=[["roupa|body|babygro|meia|casaco","👕"],["banho|higiene|fralda|toalha","🛁"],["quarto|berço|dormir|cama|ninho","🌙"],["passeio|carrinho|cadeira|viagem|auto","🚗"],["aliment|biber|papa|amament","🍼"],["brinq|livro|jogo","🧸"]];
+const emo=c=>{const k=(c||"").toLowerCase();for(const [r,e] of EMO) if(new RegExp(r).test(k)) return e;return "⭐"};
+
+const claimsOf = i => i.claims || (i.claimedBy ? [{n:i.claimedBy}] : []);
+
+function progress(){
+  const need=all.filter(i=>i.status==="need");
+  const got=need.filter(i=>claimsOf(i).length).length;
+  $("prog").hidden=!need.length;
+  if(!need.length) return;
+  $("progTxt").textContent=got+" de "+need.length+" itens já têm quem os compre";
+  $("progBar").style.width=Math.round(got/need.length*100)+"%";
+}
+
+function render(){
+  progress();
+  const rows = all.filter(i => i.status === tab);
+  if (!rows.length) { $("list").innerHTML = `<div class="empty">${tab==="need"?"Ainda não há itens a pedir.":"Ainda não há itens nesta lista."}</div>`; return; }
+  const byCat = {};
+  rows.forEach(i => (byCat[i.category] ||= []).push(i));
+  $("list").innerHTML = Object.keys(byCat).map(cat => `<h2>${emo(cat)} ${esc(cat)}</h2>` + byCat[cat].map(i => {
+    const cl = claimsOf(i), total = cl.length;
+    const mineN = cl.filter(c => c.n === me).length;
+    let actions = "";
+    if (tab === "need" && !isAdmin) {
+      actions = `<button class="act" data-a="claim" data-id="${i.id}">Vou comprar</button>`
+        + (mineN ? `<button class="act sec" data-a="unclaim" data-id="${i.id}">Desistir</button>` : "");
+    }
+    if (isAdmin) {
+      actions = `<button class="act sec" data-a="toggle" data-id="${i.id}">${i.status==="need"?"Já temos":"Precisamos"}</button>`
+        + (total ? `<button class="act sec" data-a="free" data-id="${i.id}">Libertar</button>` : "")
+        + `<button class="act bad" data-a="del" data-id="${i.id}">Apagar</button>`;
+    }
+    const cls = tab==="have" ? "have" : total ? "taken" : "";
+    const badge = total ? `<span class="qty">×${total}</span>` : "";
+    const info = tab==="need" && total ? `<small>${total} ${total>1?"unidades marcadas":"unidade marcada"}</small>` : "";
+    return `<div class="item ${cls}"><div class="n"><b>${esc(i.name)}</b>${badge}${info}</div><div class="acts">${actions}</div></div>`;
+  }).join("")).join("");
+}
+
+$("list").addEventListener("click", async e => {
+  const b = e.target.closest("button[data-a]"); if (!b) return;
+  const ref = doc(db, "items", b.dataset.id), a = b.dataset.a;
+  const it = all.find(i => i.id === b.dataset.id);
+  try {
+    if (a === "claim") {
+      let n = me || await askName();
+      if (!n) return;
+      me = n; localStorage.setItem("guestName", n);
+      const cl = claimsOf(it), c = {n, t: Date.now()};
+      if (it.claimedBy && !it.claims) await updateDoc(ref, {claims:[...cl, c], claimedBy:deleteField()});
+      else await updateDoc(ref, {claims: arrayUnion(c)});
+      toast("Obrigado! Ficou marcado 💙");
+    } else if (a === "unclaim") {
+      const cl = claimsOf(it);
+      let idx = -1; cl.forEach((c,k) => { if (c.n === me) idx = k; });
+      if (idx < 0) return;
+      await updateDoc(ref, {claims: cl.filter((_,k) => k !== idx), claimedBy: deleteField()});
+    } else if (a === "free") await updateDoc(ref, {claims: deleteField(), claimedBy: deleteField()});
+    else if (a === "toggle") await updateDoc(ref, {status: it.status==="need"?"have":"need"});
+    else if (a === "del" && confirm("Apagar este item?")) await deleteDoc(ref);
+  } catch (err) { console.error(err); toast("Não foi possível guardar: " + (err.code||"")); }
+});
+
+$("tabNeed").onclick = () => setTab("need");
+$("tabHave").onclick = () => setTab("have");
+function setTab(t){ tab=t; $("tabNeed").setAttribute("aria-selected",t==="need"); $("tabHave").setAttribute("aria-selected",t==="have"); render(); }
+
+$("addForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  try {
+    await addDoc(items, {name:$("newName").value.trim(), category:$("newCat").value.trim(), status:$("newStatus").value, created:serverTimestamp()});
+    $("newName").value=""; $("newName").focus();
+  } catch { toast("Não foi possível adicionar."); }
+});
+
+$("loginBtn").onclick = async () => {
+  const email = prompt("Email de administrador:"); if (!email) return;
+  const pass = prompt("Palavra-passe:"); if (!pass) return;
+  try { await signInWithEmailAndPassword(auth, email.trim(), pass); }
+  catch { toast("Email ou palavra-passe incorretos."); }
+};
+$("logout").onclick = () => signOut(auth);
+$("printQr").onclick = () => window.print();
+
+const pageUrl = () => location.origin + location.pathname;
+const qrCanvas = () => $("qr").querySelector("canvas");
+const qrFile = () => new Promise(res => qrCanvas().toBlob(b => res(new File([b], "qr-sebastiao.png", {type:"image/png"})), "image/png"));
+async function copyLink(){ try { await navigator.clipboard.writeText(pageUrl()); toast("Link copiado!"); } catch { toast("Não foi possível partilhar."); } }
+
+$("shareQr").onclick = async () => {
+  const text = "Chá de bebé do Sebastião, 20 de Dezembro 💙 Vê a lista e marca o que vais comprar: " + pageUrl();
+  try {
+    const f = await qrFile();
+    if (navigator.canShare && navigator.canShare({files:[f]})) { await navigator.share({title:"Chá de bebé do Sebastião", text, files:[f]}); return; }
+    if (navigator.share) { await navigator.share({title:"Chá de bebé do Sebastião", text:"Vê a lista e marca o que vais comprar 💙", url:pageUrl()}); return; }
+    await copyLink();
+  } catch (e) { if (e.name !== "AbortError") await copyLink(); }
+};
+
+$("saveQr").onclick = () => {
+  const a = document.createElement("a");
+  a.href = qrCanvas().toDataURL("image/png");
+  a.download = "qr-sebastiao.png";
+  a.click();
+};
+</script>
+</body>
+</html>
