@@ -21,7 +21,7 @@ main{max-width:640px;margin:0 auto;padding:0 16px 72px}
 .note{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--blue);border-radius:14px;padding:14px 16px;margin:-8px 0 18px;text-align:center}
 .note p{margin:0 0 8px}
 .note p:last-child{margin:0;font:600 1.05rem Fredoka,sans-serif}
-.prog{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 16px;margin:-8px 0 18px}
+.prog{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 16px;margin:0 0 18px}
 .prog p{margin:0 0 8px;font-weight:700}
 .bar{height:10px;background:var(--bg);border-radius:99px;overflow:hidden}
 .bar i{display:block;height:100%;width:0;background:var(--sun);border-radius:99px;transition:width .4s}
@@ -32,8 +32,8 @@ h2{font:600 1.15rem Fredoka,sans-serif;margin:22px 0 8px;color:var(--ink)}
 .item{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-left:5px solid var(--sun);border-radius:14px;padding:12px 14px;margin-bottom:8px;flex-wrap:wrap}
 .item .n{flex:1;min-width:150px}.item .n small{display:block;color:var(--ok);font-weight:700}
 .item.taken{border-left-color:var(--ok);background:#f6fbf9}
-.item.taken .n b{color:var(--mute)}
 .item.have{border-left-color:var(--blue)}
+.qty{display:inline-block;margin-left:6px;padding:1px 8px;background:var(--sky);border-radius:99px;font:600 .85rem Fredoka,sans-serif}
 .acts{display:flex;gap:6px;flex-wrap:wrap}
 button.act{border:0;border-radius:12px;padding:9px 14px;font:600 .95rem Fredoka,sans-serif;cursor:pointer;background:var(--blue);color:#fff}
 button.act.sec{background:#e3ecf5;color:var(--ink)}
@@ -42,8 +42,6 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .empty{color:var(--mute);padding:28px;text-align:center;border:2px dashed var(--line);border-radius:16px}
 .admin{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:16px}
 .admin form{display:flex;flex-wrap:wrap;gap:8px}
-  .qty{display:inline-block;margin-left:6px;padding:1px 8px;background:var(--sky);border-radius:99px;font:600 .85rem Fredoka,sans-serif}
-.item.partial{border-left-color:var(--blue)}
 input,select{font:inherit;padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
 input{flex:1;min-width:140px}
 #qrbox{text-align:center;margin-top:36px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}
@@ -75,9 +73,10 @@ dialog .acts{margin-top:14px;justify-content:flex-end}
 </header>
 <main>
   <section class="note">
-      <p>Esta lista é apenas uma sugestão. Cada convidado é livre de oferecer o que entender. Pedimos apenas que as prendas tenham talão de troca, para evitar presentes repetidos. 💙</p>
-      <p>O mais importante é a vossa presença neste dia tão especial para nós! 💙</p>
+    <p>Esta lista é apenas uma sugestão. Cada convidado é livre de oferecer o que entender. Pedimos apenas que as prendas tenham talão de troca, para evitar presentes repetidos. 💙</p>
+    <p>O mais importante é a vossa presença neste dia tão especial para nós! 💙</p>
   </section>
+
   <div class="prog" id="prog" hidden><p id="progTxt"></p><div class="bar"><i id="progBar"></i></div></div>
 
   <section id="adminPanel" class="admin" hidden>
@@ -86,7 +85,6 @@ dialog .acts{margin-top:14px;justify-content:flex-end}
       <input id="newCat" list="cats" placeholder="Categoria" required>
       <datalist id="cats"></datalist>
       <select id="newStatus"><option value="need">Precisamos</option><option value="have">Já temos</option></select>
-      <input id="newQty" type="number" min="1" value="1" style="flex:0 0 80px;min-width:0" aria-label="Quantidade">
       <button class="act" type="submit">Adicionar item</button>
     </form>
   </section>
@@ -175,17 +173,18 @@ function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",
 
 const EMO=[["roupa|body|babygro|meia|casaco","👕"],["banho|higiene|fralda|toalha","🛁"],["quarto|berço|dormir|cama|ninho","🌙"],["passeio|carrinho|cadeira|viagem|auto","🚗"],["aliment|biber|papa|amament","🍼"],["brinq|livro|jogo","🧸"]];
 const emo=c=>{const k=(c||"").toLowerCase();for(const [r,e] of EMO) if(new RegExp(r).test(k)) return e;return "⭐"};
+
 const claimsOf = i => i.claims || (i.claimedBy ? [{n:i.claimedBy}] : []);
-const qtyOf = i => i.qty || 1;
+
 function progress(){
   const need=all.filter(i=>i.status==="need");
-  const total=need.reduce((s,i)=>s+qtyOf(i),0);
-  const got=need.reduce((s,i)=>s+Math.min(claimsOf(i).length,qtyOf(i)),0);
-  $("prog").hidden=!total;
-  if(!total) return;
-  $("progTxt").textContent=got+" de "+total+" unidades já têm quem as compre";
-  $("progBar").style.width=Math.round(got/total*100)+"%";
+  const got=need.filter(i=>claimsOf(i).length).length;
+  $("prog").hidden=!need.length;
+  if(!need.length) return;
+  $("progTxt").textContent=got+" de "+need.length+" itens já têm quem os compre";
+  $("progBar").style.width=Math.round(got/need.length*100)+"%";
 }
+
 function render(){
   progress();
   const rows = all.filter(i => i.status === tab);
@@ -193,25 +192,24 @@ function render(){
   const byCat = {};
   rows.forEach(i => (byCat[i.category] ||= []).push(i));
   $("list").innerHTML = Object.keys(byCat).map(cat => `<h2>${emo(cat)} ${esc(cat)}</h2>` + byCat[cat].map(i => {
-    const cl = claimsOf(i), q = qtyOf(i), left = q - cl.length;
+    const cl = claimsOf(i), total = cl.length;
     const mineN = cl.filter(c => c.n === me).length;
     const counts = {}; cl.forEach(c => counts[c.n] = (counts[c.n]||0) + 1);
     const names = Object.entries(counts).map(([n,c]) => c>1 ? `${n} (×${c})` : n).join(", ");
     let actions = "";
     if (tab === "need" && !isAdmin) {
-      if (left > 0) actions += `<button class="act" data-a="claim" data-id="${i.id}">Vou comprar</button>`;
-      if (mineN) actions += `<button class="act sec" data-a="unclaim" data-id="${i.id}">Desistir</button>`;
+      actions = `<button class="act" data-a="claim" data-id="${i.id}">Vou comprar</button>`
+        + (mineN ? `<button class="act sec" data-a="unclaim" data-id="${i.id}">Desistir</button>` : "");
     }
     if (isAdmin) {
       actions = `<button class="act sec" data-a="toggle" data-id="${i.id}">${i.status==="need"?"Já temos":"Precisamos"}</button>`
-        + `<button class="act sec" data-a="qty" data-id="${i.id}">Qtd</button>`
-        + (cl.length ? `<button class="act sec" data-a="free" data-id="${i.id}">Libertar</button>` : "")
+        + (total ? `<button class="act sec" data-a="free" data-id="${i.id}">Libertar</button>` : "")
         + `<button class="act bad" data-a="del" data-id="${i.id}">Apagar</button>`;
     }
-    const cls = tab==="have" ? "have" : left<=0 ? "taken" : cl.length ? "partial" : "";
-    const info = tab==="need" && cl.length
-      ? `<small>${q>1 ? `${Math.min(cl.length,q)} de ${q} · ` : ""}${esc(names)} ${q>1?"vão":"vai"} comprar</small>` : "";
-    return `<div class="item ${cls}"><div class="n"><b>${esc(i.name)}</b>${q>1?`<span class="qty">×${q}</span>`:""}${info}</div><div class="acts">${actions}</div></div>`;
+    const cls = tab==="have" ? "have" : total ? "taken" : "";
+    const badge = total ? `<span class="qty">×${total}</span>` : "";
+    const info = tab==="need" && total ? `<small>${total} ${total>1?"unidades marcadas":"unidade marcada"}: ${esc(names)}</small>` : "";
+    return `<div class="item ${cls}"><div class="n"><b>${esc(i.name)}</b>${badge}${info}</div><div class="acts">${actions}</div></div>`;
   }).join("")).join("");
 }
 
@@ -221,12 +219,10 @@ $("list").addEventListener("click", async e => {
   const it = all.find(i => i.id === b.dataset.id);
   try {
     if (a === "claim") {
-      const cl = claimsOf(it);
-      if (cl.length >= qtyOf(it)) { toast("Já não faltam unidades."); return; }
       let n = me || await askName();
       if (!n) return;
       me = n; localStorage.setItem("guestName", n);
-      const c = {n, t: Date.now()};
+      const cl = claimsOf(it), c = {n, t: Date.now()};
       if (it.claimedBy && !it.claims) await updateDoc(ref, {claims:[...cl, c], claimedBy:deleteField()});
       else await updateDoc(ref, {claims: arrayUnion(c)});
       toast("Obrigado! Ficou marcado 💙");
@@ -236,13 +232,9 @@ $("list").addEventListener("click", async e => {
       if (idx < 0) return;
       await updateDoc(ref, {claims: cl.filter((_,k) => k !== idx), claimedBy: deleteField()});
     } else if (a === "free") await updateDoc(ref, {claims: deleteField(), claimedBy: deleteField()});
-    else if (a === "qty") {
-      const v = parseInt(prompt("Quantidade necessária:", qtyOf(it)), 10);
-      if (v >= 1) await updateDoc(ref, {qty: v});
-    }
-    else if (a === "toggle") await updateDoc(ref, {status: it.status==="need"?"have":"need", claims: deleteField(), claimedBy: deleteField()});
+    else if (a === "toggle") await updateDoc(ref, {status: it.status==="need"?"have":"need"});
     else if (a === "del" && confirm("Apagar este item?")) await deleteDoc(ref);
-  } catch { toast("Não foi possível guardar. Tenta outra vez."); }
+  } catch (err) { console.error(err); toast("Não foi possível guardar: " + (err.code||"")); }
 });
 
 $("tabNeed").onclick = () => setTab("need");
@@ -252,7 +244,7 @@ function setTab(t){ tab=t; $("tabNeed").setAttribute("aria-selected",t==="need")
 $("addForm").addEventListener("submit", async e => {
   e.preventDefault();
   try {
-    await addDoc(items, {name:$("newName").value.trim(), category:$("newCat").value.trim(), status:$("newStatus").value, qty:Math.max(1,parseInt($("newQty").value,10)||1), created:serverTimestamp()});
+    await addDoc(items, {name:$("newName").value.trim(), category:$("newCat").value.trim(), status:$("newStatus").value, created:serverTimestamp()});
     $("newName").value=""; $("newName").focus();
   } catch { toast("Não foi possível adicionar."); }
 });
